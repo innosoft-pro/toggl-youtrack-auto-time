@@ -48,7 +48,7 @@ class TogglDataManager:
         entries_list = json.loads(result_text)
         result = []
         for entry in entries_list:
-            if entry['duration'] > 0 and entry['description'].startswith(TogglConfig.YOUTRACK_TASKS_ID):
+            if entry['duration'] > 0 and entry['description'].startswith(TogglConfig.YOUTRACK_TASKS_ID_CONST):
                 result.append({
                     'toggl_id': entry['id'],
                     'youtrack_id': entry['description'].strip().split(' ')[0],

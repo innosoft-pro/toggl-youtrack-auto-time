@@ -1,6 +1,6 @@
 from config import YoutrackConfig
 import requests
-from lxml import etree, html
+from lxml import etree
 
 
 class YoutrackDataManager:
@@ -49,8 +49,8 @@ class YoutrackDataManager:
             youtrack_url = YoutrackConfig.WORKITEM_URL.replace(YoutrackConfig.ISSUE_ID_CONST, time_entry['youtrack_id'])
 
             work_item_xml = etree.Element('workItem')
-            # multiplying by 1000 needed because youtrack despite the fact that they said "we accepted epoch unix",
-            # which is in seconds, they need in milliseconds
+            # multiplying by 1000 needed because despite the fact that youtrack said "we accepted epoch unix",
+            # which is in seconds, it need time in milliseconds
             epoch_date_str = str(int(time_entry['start_time'].timestamp() * 1000))
             duration_minutes_str = str(time_entry['duration'] // 60)
             etree.SubElement(work_item_xml, 'date').text = epoch_date_str
@@ -64,7 +64,7 @@ class YoutrackDataManager:
                                    headers=headers)
             if result.status_code == 201:
                 print('time {0:s} minutes for issue {1:s} tracked successfully'.format(duration_minutes_str,
-                                                                               time_entry['full_description']))
+                                                                                       time_entry['full_description']))
             else:
                 print('cannot track time {0:s} minutes for issue {1:s}. Response message: {2:s}'
                       .format(duration_minutes_str, time_entry['full_description'], result.text))
