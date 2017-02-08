@@ -3,7 +3,7 @@ import requests
 import json
 from pytz import utc
 from datetime import datetime
-
+from dateutil.parser import parse
 
 class TogglDataManager:
     def __init__(self):
@@ -15,7 +15,8 @@ class TogglDataManager:
         loads data for 9 last days or 1000 entries (constraint on API level).
         :param start_date: datetime
         :param end_date: datetime
-        :return: list of time entries. Each entry contains toggl_id, youtrack_id, full_description, duration (sec).
+        :return: list of time entries. Each entry contains toggl_id, youtrack_id, full_description,
+        duration (sec), start_date (datetime with timezone).
         """
         if start_date is not None:
             st_dt_str = datetime(year=start_date.year, month=start_date.month, day=start_date.day, hour=0, minute=0,
@@ -34,7 +35,7 @@ class TogglDataManager:
             'end_date': end_dt_str
         }
 
-        result = requests.get(TogglConfig.GET_ENTRIES_API, auth=(TogglConfig.TOKEN, TogglConfig.TOKEN_PASS),
+        result = requests.get(TogglConfig.GET_ENTRIES_URL, auth=(TogglConfig.TOKEN, TogglConfig.TOKEN_PASS),
                               params=params)
 
         result.raise_for_status()
@@ -52,7 +53,8 @@ class TogglDataManager:
                     'toggl_id': entry['id'],
                     'youtrack_id': entry['description'].strip().split(' ')[0],
                     'full_description': entry['description'],
-                    'duration': entry['duration']
+                    'duration': entry['duration'],
+                    'start_time': parse(entry['start'])
                 })
         return result
 

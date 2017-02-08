@@ -19,7 +19,7 @@ def get_magic_done():
     for entry in toggle_time_entries:
         print(entry)
 
-    print('these time entries will be tracked into youtrack')
+    print('These time entries will be tracked into youtrack')
     # add time from entries to youtrack
     youtrack_data_manager.track_time(toggle_time_entries)
 
