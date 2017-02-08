@@ -39,7 +39,6 @@ class YoutrackDataManager:
         adds to corresponding youtrack tasks work items with corresponding durations
         :param toggle_time_entries: list of time entries. Each entry contains toggl_id, youtrack_id,
         full_description, duration (sec).
-        :return: bool (success or not)
         """
         headers = {
             'cookie': self.cookie,
