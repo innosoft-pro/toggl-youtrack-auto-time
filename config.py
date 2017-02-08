@@ -1,5 +1,15 @@
 class TogglConfig:
-    TOKEN = 'a43af60cd464711c0ca08e77fe0f1c40'
-    GET_ENTRIES_API = 'https://www.toggl.com/api/v8/time_entries'
+    TOKEN = 'EnterYourToken'
+    GET_ENTRIES_URL = 'https://www.toggl.com/api/v8/time_entries'
     TOKEN_PASS = 'api_token'
-    YOUTRACK_TASKS_ID = 'MMX'
+    YOUTRACK_TASKS_ID_CONST = 'MMX'
+
+
+class YoutrackConfig:
+    YOUTRACK_URL = 'EnterYourYoutrackURL'
+    LOGIN_URL = YOUTRACK_URL+'/rest/user/login'
+    WORKITEM_URL = YOUTRACK_URL+'/rest/issue/{issue_id}/timetracking/workitem'
+    ISSUE_ID_CONST = '{issue_id}'
+
+    LOGIN = 'EnterYourLogin'
+    PASS = 'EnterYourPassword'
