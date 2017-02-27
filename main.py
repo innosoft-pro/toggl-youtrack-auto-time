@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from datetime import date
 from toggl import TogglDataManager
 from youtrack import YoutrackDataManager
@@ -11,7 +13,7 @@ def get_magic_done():
     # get time entries from toggl
     toggle_time_entries = toggl_data_manager.load_time_entries(date.today())
 
-    if len(toggle_time_entries)==0:
+    if len(toggle_time_entries) == 0:
         print('we did not find any entries')
         return
 
