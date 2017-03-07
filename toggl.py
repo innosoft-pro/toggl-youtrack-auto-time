@@ -92,7 +92,7 @@ class TogglDataManager:
 
             if self._is_me_reviewer(youtrack_tasks[time_entry['youtrack_id']]):
                 project_id = projects_ids['Quality management']
-            elif projects_ids[youtrack_tasks[time_entry['youtrack_id']]['tag']]:
+            elif youtrack_tasks[time_entry['youtrack_id']]['tag']:
                 project_id = projects_ids[youtrack_tasks[time_entry['youtrack_id']]['tag'][0]]
             else:
                 project_id = None
