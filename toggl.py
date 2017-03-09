@@ -5,6 +5,7 @@ from pytz import utc
 from datetime import datetime
 from dateutil.parser import parse
 
+
 class TogglDataManager:
     def __init__(self):
         pass
