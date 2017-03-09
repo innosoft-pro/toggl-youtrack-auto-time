@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- encoding: utf-8 -*-
 from config import YoutrackConfig
 import requests
 from lxml import etree
@@ -6,6 +8,7 @@ from lxml import etree
 class YoutrackDataManager:
     def __init__(self):
         self.cookie = self._login()
+        self.attributes = ['Subsystem', 'summary', 'Ревьюер']
 
     def _login(self):
         data = {
@@ -28,11 +31,49 @@ class YoutrackDataManager:
         :param toggle_time_entries: list of time entries. Each entry contains toggl_id, youtrack_id,
         full_description, duration (sec).
         :return: dict. key is youtrack issue id (example - MMX-111), value is object that contains following data:
-        subsystem: str
-        tags: list of str
-        name: str
+        Subsystem: str
+        tag: list of str
+        summary: str
+        Ревьюер: list of str
         """
-        pass
+        headers = {
+            'cookie': self.cookie
+        }
+
+        result_items = {}
+
+        for time_entry in toggle_time_entries:
+            youtrack_url = YoutrackConfig.ISSUE_URL.replace(YoutrackConfig.ISSUE_ID_CONST, time_entry['youtrack_id'])
+            result = requests.get(youtrack_url, headers=headers)
+
+            if result.status_code != 200:
+                print('cannot load tags for issue {0:s}. Response message: {1:s}'
+                      .format(time_entry['youtrack_id'], result.text))
+                continue
+
+            result_items[time_entry['youtrack_id']] = {}
+            result_items[time_entry['youtrack_id']]['tag'] = []
+
+            xml_string = result.text
+            issue_xml_tree = etree.fromstring(xml_string.encode())
+            for item in issue_xml_tree:
+
+                if 'name' in item.attrib.keys():
+                    atr_name = item.attrib['name']
+                    if atr_name in self.attributes:
+                        subitems = item.getchildren()
+                        vals = [subitem.text for subitem in subitems if subitem.tag == 'value']
+                        if len(vals) == 1:
+                            result_items[time_entry['youtrack_id']][atr_name] = vals[0]
+                        elif len(vals) > 1:
+                            result_items[time_entry['youtrack_id']][atr_name] = vals
+                elif item.tag == 'tag':
+                    result_items[time_entry['youtrack_id']]['tag'].append(item.text)
+
+            if 'Звезда' in result_items[time_entry['youtrack_id']]['tag']:
+                result_items[time_entry['youtrack_id']]['tag'].remove('Звезда')
+
+        return result_items
 
     def track_time(self, toggle_time_entries):
         """
