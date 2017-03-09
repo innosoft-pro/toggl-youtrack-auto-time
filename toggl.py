@@ -119,7 +119,7 @@ class TogglDataManager:
 
     def _load_workspace_id(self):
         result = requests.get(TogglConfig.GET_WORKSPACES_URL, auth=(self.token, TogglConfig.TOKEN_PASS))
-        workspaces_list = json.loads(result.text)
+        workspaces_list = result.json()
         workspace_id = 0
         for workspace in workspaces_list:
             if workspace['name'] == TogglConfig.WORKSPACE_NAME:
@@ -132,7 +132,7 @@ class TogglDataManager:
     def _load_project_ids(self, workspace_id):
         projects_url = TogglConfig.GET_WORKSPACES_URL + '/' + str(workspace_id) + '/projects'
         result = requests.get(projects_url, auth=(self.token, TogglConfig.TOKEN_PASS))
-        projects_list = json.loads(result.text)
+        projects_list = result.json()
         result_dict = {}
         for project in projects_list:
             result_dict[project['name']] = project['id']
