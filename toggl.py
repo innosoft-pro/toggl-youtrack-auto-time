@@ -113,7 +113,7 @@ class TogglDataManager:
             if (type(yt_record['Ревьюер']) is str and
                         yt_record['Ревьюер'] == YoutrackConfig.LOGIN) or \
                     (type(yt_record['Ревьюер']) is list and
-                             len(yt_record['Ревьюер']) == 2 and
+                             len(yt_record['Ревьюер']) >= 2 and
                              YoutrackConfig.LOGIN in yt_record['Ревьюер']):
                 return True
 
