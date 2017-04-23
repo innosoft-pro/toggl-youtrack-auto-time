@@ -33,7 +33,7 @@ def get_magic_done(track, format, start, end):
         click.echo('name: {0:s}, start time: {1:s}, duration: {2:d} min'.format(
             entry['full_description'],
             entry['start_time'].strftime('%c'),
-            entry['duration'] // 60))
+            round(entry['duration'] / 60)))
     if track:
         click.echo('These time entries will be tracked into youtrack')
         # add time from entries to youtrack

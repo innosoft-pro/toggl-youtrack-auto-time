@@ -91,7 +91,7 @@ class YoutrackDataManager:
             # multiplying by 1000 needed because despite the fact that youtrack said "we accepted epoch unix",
             # which is in seconds, it need time in milliseconds
             epoch_date_str = str(int(time_entry['start_time'].timestamp() * 1000))
-            duration_minutes_str = str(time_entry['duration'] // 60)
+            duration_minutes_str = str(round(time_entry['duration'] / 60))
             etree.SubElement(work_item_xml, 'date').text = epoch_date_str
             etree.SubElement(work_item_xml, 'duration').text = duration_minutes_str
             etree.SubElement(work_item_xml, 'description').text = ''
