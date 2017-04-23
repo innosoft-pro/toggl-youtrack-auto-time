@@ -13,7 +13,9 @@ def load_config(default_path='config.json', env_key='CFG'):
     else:
         raise FileNotFoundError('No config found by path "{}"'.format(path))
 
+
 config = load_config()
+
 
 class TogglConfig:
     YOUTRACK_TASKS_ID_CONST = config['youtrack']['tasks_prefix']
