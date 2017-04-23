@@ -7,8 +7,11 @@ def load_config(default_path='config.json', env_key='CFG'):
     path = Path(default_path)
     value = os.getenv(env_key, None)
     if value:
-        path = value
-    return json.loads(path.read_text(encoding='utf-8'))
+        path = Path(value)
+    if path.exists():
+        return json.loads(path.read_text(encoding='utf-8'))
+    else:
+        raise FileNotFoundError('No config found by path "{}"'.format(path))
 
 config = load_config()
 
