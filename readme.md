@@ -13,12 +13,27 @@ Attention!
     sudo pip3 install -r requirements.txt
 
 
-2. Заполни конфиг
+2. Создай конфиг в корне под любым именем (дефолтное - config.json).
 
-зайди в файл config.py
 
-Найди все поля, где написано <FILL ME PLEASE>, и внеси туда что-нибудь логичное.
-например, если это поле LOGIN в TogglConfig, то желательно внести туда логин из тоггла.
+    {
+      "toggl": {
+        "login": "name@example.com",
+        "password": "top_secret_password",
+        "workspace": "workspace_name"
+      },
+      "youtrack": {
+        "link": "https://youtrack.example.com",
+        "login": "name",
+        "password": "top_secret_password",
+        "tasks_prefix": "MMX"
+      }
+    }
+
+Если нужно подгрузить конфиг не с дефолтным именем, то используй 
+переменную среды CFG:
+
+    CFG=my_config.json python3 toggl_youtrack.py --track --format
 
 Attention! Логины и пароли хранятся в plain text, но кого это волнует.
 
