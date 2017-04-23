@@ -27,8 +27,6 @@ def get_magic_done(track, format, since_last, starting_from, until):
         start_datetime = _process_arg(starting_from)
         end_datetime = _process_arg(until)
 
-    set_last_datetime(end_datetime)
-
     # initialization
     toggl_data_manager = TogglDataManager()
     youtrack_data_manager = YoutrackDataManager()
@@ -56,6 +54,9 @@ def get_magic_done(track, format, since_last, starting_from, until):
             entry['start_time'].strftime('%c'),
             round(entry['duration'] / 60)))
     if track:
+        # save last tracking time to data file
+        set_last_datetime(end_datetime)
+
         click.echo('These time entries will be tracked into youtrack')
         # add time from entries to youtrack
         youtrack_data_manager.track_time(toggle_time_entries)
