@@ -93,3 +93,6 @@ ENV/
 
 # Unit-test reports
 unit
+
+# configs
+*config.json
