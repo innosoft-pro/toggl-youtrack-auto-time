@@ -6,7 +6,7 @@ from lxml import etree
 class YoutrackDataManager:
     def __init__(self):
         self.cookie = self._login()
-        self.attributes = ['Subsystem', 'summary', 'Ревьюер']
+        self.attributes = [YoutrackConfig.SUBSYSTEM, YoutrackConfig.SUMMARY, YoutrackConfig.REVIEWER]
 
     def _login(self):
         data = {
@@ -68,8 +68,8 @@ class YoutrackDataManager:
                 elif item.tag == 'tag':
                     result_items[time_entry['youtrack_id']]['tag'].append(item.text)
 
-            if 'Звезда' in result_items[time_entry['youtrack_id']]['tag']:
-                result_items[time_entry['youtrack_id']]['tag'].remove('Звезда')
+            if YoutrackConfig.STAR in result_items[time_entry['youtrack_id']]['tag']:
+                result_items[time_entry['youtrack_id']]['tag'].remove(YoutrackConfig.STAR)
 
         return result_items
 

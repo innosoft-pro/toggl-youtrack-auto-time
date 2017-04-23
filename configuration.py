@@ -34,3 +34,8 @@ class YoutrackConfig:
     LOGIN_URL = YOUTRACK_URL + '/rest/user/login'
     WORKITEM_URL = YOUTRACK_URL + '/rest/issue/' + ISSUE_ID_CONST + '/timetracking/workitem'
     ISSUE_URL = YOUTRACK_URL + '/rest/issue/' + ISSUE_ID_CONST
+    # youtrack fields
+    SUMMARY = 'summary'
+    SUBSYSTEM = 'Subsystem'
+    REVIEWER = 'Ревьюер'
+    STAR = 'Звезда'
