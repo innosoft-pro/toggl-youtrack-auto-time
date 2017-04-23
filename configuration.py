@@ -24,6 +24,7 @@ class TogglConfig:
     PASS = config['toggl']['password']
     AUTH_URL = 'https://www.toggl.com/api/v8/me'
     GET_ENTRIES_URL = 'https://www.toggl.com/api/v8/time_entries'
+    GET_CURRENT_ENTRY_URL = GET_ENTRIES_URL + '/current'
     GET_WORKSPACES_URL = 'https://www.toggl.com/api/v8/workspaces'
     TOKEN_PASS = 'api_token'
 

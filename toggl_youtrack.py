@@ -15,17 +15,23 @@ def get_magic_done(track, format, start, end):
     start_date = _process_arg(start)
     end_date = _process_arg(end)
 
-    click.echo(
-        'Time interval is from {0:s} to {1:s}'.format(start_date.strftime('%d-%m-%Y'), end_date.strftime('%d-%m-%Y')))
-
     # initialization
     toggl_data_manager = TogglDataManager()
     youtrack_data_manager = YoutrackDataManager()
+
+    # check current time entry
+    if toggl_data_manager.is_current_time_entry_exist():
+        click.echo('Please stop running time entry, otherwise tracking problems might occur. Application stopped.')
+        return
+
+    click.echo(
+        'Time interval is from {0:s} to {1:s}'.format(start_date.strftime('%d-%m-%Y'), end_date.strftime('%d-%m-%Y')))
+
     # get time entries from toggl
     toggle_time_entries = toggl_data_manager.load_time_entries(start_date, end_date)
 
     if len(toggle_time_entries) == 0:
-        print('For requested time interval we did not find any entries')
+        print('For requested time interval we did not find any entries. Application stopped.')
         return
 
     click.echo('For requested time interval in toggl we found {0:d} entry(-ies):'.format(len(toggle_time_entries)))
