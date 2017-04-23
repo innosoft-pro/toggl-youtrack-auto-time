@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
 from configuration import YoutrackConfig
 import requests
 from lxml import etree
