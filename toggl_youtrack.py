@@ -3,6 +3,7 @@
 from datetime import date, timedelta, datetime
 from toggl import TogglDataManager
 from youtrack import YoutrackDataManager
+from configuration import load_last_datetime, set_last_datetime
 import pytz
 import click
 
@@ -14,8 +15,19 @@ import click
 @click.option('--starting_from', default='today', help='date when start track time')
 @click.option('--until', default='tomorrow', help='date when stop track time')
 def get_magic_done(track, format, since_last, starting_from, until):
-    start_datetime = _process_arg(starting_from)
-    end_datetime = _process_arg(until)
+    if since_last:
+        try:
+            last_time = load_last_datetime()
+        except (FileNotFoundError, ValueError) as e:
+            click.echo(e)
+            return
+        start_datetime = last_time
+        end_datetime = datetime.utcnow().replace(tzinfo=pytz.utc)
+    else:
+        start_datetime = _process_arg(starting_from)
+        end_datetime = _process_arg(until)
+
+    set_last_datetime(end_datetime)
 
     # initialization
     toggl_data_manager = TogglDataManager()
