@@ -10,6 +10,15 @@ class TogglDataManager:
     def __init__(self):
         self.token = self._authenticate()
 
+    def is_current_time_entry_exist(self):
+        result = requests.get(TogglConfig.GET_CURRENT_ENTRY_URL, auth=(TogglConfig.LOGIN, TogglConfig.PASS))
+        result.raise_for_status()
+        entry = json.loads(result.text)
+        if entry['data'] is None:
+            return False
+        else:
+            return True
+
     def _authenticate(self):
         result = requests.get(TogglConfig.AUTH_URL, auth=(TogglConfig.LOGIN, TogglConfig.PASS))
         result.raise_for_status()
