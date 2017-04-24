@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
-from config import TogglConfig, YoutrackConfig
+from configuration import TogglConfig, YoutrackConfig
 import requests
 import json
 from pytz import utc

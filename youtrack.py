@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
-from config import YoutrackConfig
+from configuration import YoutrackConfig
 import requests
 from lxml import etree
 
@@ -8,7 +6,7 @@ from lxml import etree
 class YoutrackDataManager:
     def __init__(self):
         self.cookie = self._login()
-        self.attributes = ['Subsystem', 'summary', 'Ревьюер']
+        self.attributes = [YoutrackConfig.SUBSYSTEM, YoutrackConfig.SUMMARY, YoutrackConfig.REVIEWER]
 
     def _login(self):
         data = {
@@ -70,8 +68,8 @@ class YoutrackDataManager:
                 elif item.tag == 'tag':
                     result_items[time_entry['youtrack_id']]['tag'].append(item.text)
 
-            if 'Звезда' in result_items[time_entry['youtrack_id']]['tag']:
-                result_items[time_entry['youtrack_id']]['tag'].remove('Звезда')
+            if YoutrackConfig.STAR in result_items[time_entry['youtrack_id']]['tag']:
+                result_items[time_entry['youtrack_id']]['tag'].remove(YoutrackConfig.STAR)
 
         return result_items
 
@@ -93,7 +91,7 @@ class YoutrackDataManager:
             # multiplying by 1000 needed because despite the fact that youtrack said "we accepted epoch unix",
             # which is in seconds, it need time in milliseconds
             epoch_date_str = str(int(time_entry['start_time'].timestamp() * 1000))
-            duration_minutes_str = str(time_entry['duration'] // 60)
+            duration_minutes_str = str(round(time_entry['duration'] / 60))
             etree.SubElement(work_item_xml, 'date').text = epoch_date_str
             etree.SubElement(work_item_xml, 'duration').text = duration_minutes_str
             etree.SubElement(work_item_xml, 'description').text = ''
