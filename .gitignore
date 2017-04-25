@@ -96,3 +96,6 @@ unit
 
 # configs
 *config.json
+
+# launch_data
+launch_data.json
