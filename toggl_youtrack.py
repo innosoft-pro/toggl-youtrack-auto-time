@@ -3,17 +3,29 @@
 from datetime import date, timedelta, datetime
 from toggl import TogglDataManager
 from youtrack import YoutrackDataManager
+from configuration import load_last_datetime, set_last_datetime
+import pytz
 import click
 
 
 @click.command()
 @click.option('--track', is_flag=True, default=False, help='tracks time to youtrack from toggl')
 @click.option('--format', is_flag=True, default=False, help='formats toggl entries by youtrack tags')
-@click.argument('start', default='today')
-@click.argument('end', default='tomorrow')
-def get_magic_done(track, format, start, end):
-    start_date = _process_arg(start)
-    end_date = _process_arg(end)
+@click.option('--since_last', is_flag=True, default=False, help='track all data since last launch')
+@click.option('--starting_from', default='today', help='date when start track time')
+@click.option('--until', default='tomorrow', help='date when stop track time')
+def get_magic_done(track, format, since_last, starting_from, until):
+    if since_last:
+        try:
+            last_time = load_last_datetime()
+        except (FileNotFoundError, ValueError) as e:
+            click.echo(e)
+            return
+        start_datetime = last_time
+        end_datetime = datetime.utcnow().replace(tzinfo=pytz.utc)
+    else:
+        start_datetime = _process_arg(starting_from)
+        end_datetime = _process_arg(until)
 
     # initialization
     toggl_data_manager = TogglDataManager()
@@ -25,10 +37,11 @@ def get_magic_done(track, format, start, end):
         return
 
     click.echo(
-        'Time interval is from {0:s} to {1:s}'.format(start_date.strftime('%d-%m-%Y'), end_date.strftime('%d-%m-%Y')))
+        'Time interval is from {0:s} until {1:s}'.format(start_datetime.strftime('%d-%m-%Y %H:%M:%S'),
+                                                         end_datetime.strftime('%d-%m-%Y %H:%M:%S')))
 
     # get time entries from toggl
-    toggle_time_entries = toggl_data_manager.load_time_entries(start_date, end_date)
+    toggle_time_entries = toggl_data_manager.load_time_entries(start_datetime, end_datetime)
 
     if len(toggle_time_entries) == 0:
         print('For requested time interval we did not find any entries. Application stopped.')
@@ -41,6 +54,9 @@ def get_magic_done(track, format, start, end):
             entry['start_time'].strftime('%c'),
             round(entry['duration'] / 60)))
     if track:
+        # save last tracking time to data file
+        set_last_datetime(end_datetime)
+
         click.echo('These time entries will be tracked into youtrack')
         # add time from entries to youtrack
         youtrack_data_manager.track_time(toggle_time_entries)
@@ -58,14 +74,21 @@ def get_magic_done(track, format, start, end):
 
 def _process_arg(dt):
     if dt == 'today':
-        return date.today()
+        return _convert_date_to_datetime(date.today())
     elif dt == 'yesterday':
-        return date.today() - timedelta(days=1)
+        return _convert_date_to_datetime(date.today() - timedelta(days=1))
     elif dt == 'tomorrow':
-        return date.today() + timedelta(days=1)
+        return _convert_date_to_datetime(date.today() + timedelta(days=1))
     else:
-        dt_parsed = datetime.strptime(dt, '%d-%m-%Y')
-        return dt_parsed.date()
+        try:
+            return datetime.strptime(dt, '%d-%m-%Y').replace(tzinfo=pytz.utc)
+        except ValueError:
+            return datetime.strptime(dt, '%d-%m-%Y %H:%M:%S').replace(tzinfo=pytz.utc)
+
+
+def _convert_date_to_datetime(dt):
+    return datetime(year=dt.year, month=dt.month, day=dt.day, hour=0, minute=0,
+                    second=0, tzinfo=pytz.utc)
 
 
 if __name__ == '__main__':
