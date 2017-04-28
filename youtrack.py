@@ -73,16 +73,20 @@ class YoutrackDataManager:
 
         return result_items
 
-    def track_time(self, toggle_time_entries):
+    def track_time(self, toggle_time_entries, merge):
         """
         adds to corresponding youtrack tasks work items with corresponding durations
         :param toggle_time_entries: list of time entries. Each entry contains toggl_id, youtrack_id,
         full_description, duration (sec).
+        :param merge: if set to True, will merge multiple tracks for same task into single record
         """
         headers = {
             'cookie': self.cookie,
             'content-type': 'application/xml'
         }
+
+        if merge:
+            toggle_time_entries = self._merge_toggl_entries(toggle_time_entries)
 
         for time_entry in toggle_time_entries:
             youtrack_url = YoutrackConfig.WORKITEM_URL.replace(YoutrackConfig.ISSUE_ID_CONST, time_entry['youtrack_id'])
@@ -107,3 +111,14 @@ class YoutrackDataManager:
             else:
                 print('cannot track time {0:s} minutes for issue {1:s}. Response message: {2:s}'
                       .format(duration_minutes_str, time_entry['full_description'], result.text))
+
+    @staticmethod
+    def _merge_toggl_entries(toggl_time_entries):
+        merged_entries = {}
+        for time_entry in toggl_time_entries:
+            yt_id = time_entry['youtrack_id']
+            if yt_id in merged_entries:
+                merged_entries[yt_id]['duration'] += time_entry['duration']
+            else:
+                merged_entries[yt_id] = time_entry
+        return list(merged_entries.values())

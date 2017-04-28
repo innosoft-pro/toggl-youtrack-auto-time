@@ -14,7 +14,8 @@ import click
 @click.option('--since_last', is_flag=True, default=False, help='track all data since last launch')
 @click.option('--starting_from', default='today', help='date when start track time')
 @click.option('--until', default='tomorrow', help='date when stop track time')
-def get_magic_done(track, format, since_last, starting_from, until):
+@click.option('--merge', is_flag=True, default=False, help='merge identical entries when tracking time to youtrack')
+def get_magic_done(track, format, since_last, starting_from, until, merge):
     if since_last:
         try:
             last_time = load_last_datetime()
@@ -59,7 +60,7 @@ def get_magic_done(track, format, since_last, starting_from, until):
 
         click.echo('These time entries will be tracked into youtrack')
         # add time from entries to youtrack
-        youtrack_data_manager.track_time(toggle_time_entries)
+        youtrack_data_manager.track_time(toggle_time_entries, merge=merge)
 
     if format:
         click.echo('Formatting time entries')
