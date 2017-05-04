@@ -1,6 +1,9 @@
 from configuration import YoutrackConfig
 import requests
 from lxml import etree
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class YoutrackDataManager:
@@ -8,7 +11,8 @@ class YoutrackDataManager:
         self.cookie = self._login()
         self.attributes = [YoutrackConfig.SUBSYSTEM, YoutrackConfig.SUMMARY, YoutrackConfig.REVIEWER]
 
-    def _login(self):
+    @staticmethod
+    def _login():
         data = {
             'login': YoutrackConfig.LOGIN,
             'password': YoutrackConfig.PASS
@@ -45,7 +49,7 @@ class YoutrackDataManager:
             result = requests.get(youtrack_url, headers=headers)
 
             if result.status_code != 200:
-                print('cannot load tags for issue {0:s}. Response message: {1:s}'
+                logger.error('cannot load tags for issue {0:s}. Response message: {1:s}'
                       .format(time_entry['youtrack_id'], result.text))
                 continue
 
