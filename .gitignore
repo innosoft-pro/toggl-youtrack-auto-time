@@ -98,5 +98,5 @@ unit
 *config.json
 
 # launch_data
-launch_data.json
+configs/launch_data.json
 run.sh

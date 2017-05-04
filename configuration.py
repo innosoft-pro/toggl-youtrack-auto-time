@@ -5,17 +5,18 @@ import os
 import pytz
 
 ENV_CONFIG_KEY = 'CFG'
-DATA_PATH = Path('launch_data.json')
+CONFIGS_FOLDER_PATH = Path('configs')
+DATA_PATH = CONFIGS_FOLDER_PATH.joinpath('launch_data.json')
 DT_FORMAT = '%d-%m-%Y %H:%M:%S %Z'
 
 
 def get_config_path():
-    default_path = 'config.json'
+    default_path = CONFIGS_FOLDER_PATH.joinpath('config.json')
     nondefault_path = os.getenv(ENV_CONFIG_KEY, None)
     if nondefault_path:
-        return Path(nondefault_path)
+        return CONFIGS_FOLDER_PATH.joinpath(nondefault_path)
     else:
-        return Path(default_path)
+        return default_path
 
 
 def load_config():
