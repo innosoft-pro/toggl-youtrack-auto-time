@@ -2,6 +2,9 @@ from configuration import TogglConfig, YoutrackConfig
 import requests
 import json
 from dateutil.parser import parse
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class TogglDataManager:
@@ -90,17 +93,22 @@ class TogglDataManager:
         for time_entry in toggle_time_entries:
             url = TogglConfig.GET_ENTRIES_URL + '/' + str(time_entry['toggl_id'])
 
-            if 'Subsystem' in youtrack_tasks[time_entry['youtrack_id']]:
-                tags = [youtrack_tasks[time_entry['youtrack_id']]['Subsystem']]
+            if YoutrackConfig.SUBSYSTEM in youtrack_tasks[time_entry['youtrack_id']]:
+                project_name = youtrack_tasks[time_entry['youtrack_id']][YoutrackConfig.SUBSYSTEM]
+                try:
+                    project_id = projects_ids[project_name]
+                except ValueError:
+                    logger.error('Project with name {} does not found in toggl'.format(project_name))
+                    continue
             else:
-                tags = []
-
-            if self._is_me_reviewer(youtrack_tasks[time_entry['youtrack_id']]):
-                project_id = projects_ids['Quality management']
-            elif youtrack_tasks[time_entry['youtrack_id']]['tag']:
-                project_id = projects_ids[youtrack_tasks[time_entry['youtrack_id']]['tag'][0]]
-            else:
+                logger.warning('Subsystem is not set for task {}'.format(time_entry['youtrack_id']))
                 project_id = None
+
+            tags = []
+            if youtrack_tasks[time_entry['youtrack_id']]['tag']:
+                tags.extend(youtrack_tasks[time_entry['youtrack_id']]['tag'])
+            if self._is_me_reviewer(youtrack_tasks[time_entry['youtrack_id']]):
+                tags.append(TogglConfig.REVIEW)
 
             new_time_entry = self._get_time_entry_template(
                 time_entry['youtrack_id'] + ' ' + youtrack_tasks[time_entry['youtrack_id']]['summary'],
@@ -113,7 +121,8 @@ class TogglDataManager:
                                   data=json.dumps(new_time_entry))
             result.raise_for_status()
 
-    def _is_me_reviewer(self, yt_record):
+    @staticmethod
+    def _is_me_reviewer(yt_record):
         if YoutrackConfig.REVIEWER in yt_record:
             reviewer = yt_record[YoutrackConfig.REVIEWER]
             if (type(reviewer) is str and
