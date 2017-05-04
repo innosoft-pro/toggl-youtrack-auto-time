@@ -111,12 +111,13 @@ class TogglDataManager:
             result.raise_for_status()
 
     def _is_me_reviewer(self, yt_record):
-        if 'Ревьюер' in yt_record:
-            if (type(yt_record['Ревьюер']) is str and
-                        yt_record['Ревьюер'] == YoutrackConfig.LOGIN) or \
-                    (type(yt_record['Ревьюер']) is list and
-                             len(yt_record['Ревьюер']) >= 2 and
-                             YoutrackConfig.LOGIN in yt_record['Ревьюер']):
+        if YoutrackConfig.REVIEWER in yt_record:
+            reviewer = yt_record[YoutrackConfig.REVIEWER]
+            if (type(reviewer) is str and
+                        reviewer == YoutrackConfig.LOGIN) or \
+                    (type(reviewer) is list and
+                             len(reviewer) >= 2 and
+                             YoutrackConfig.LOGIN in reviewer):
                 return True
 
     def _load_workspace_id(self):
