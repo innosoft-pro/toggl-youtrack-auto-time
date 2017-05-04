@@ -8,7 +8,8 @@ class YoutrackDataManager:
         self.cookie = self._login()
         self.attributes = [YoutrackConfig.SUBSYSTEM, YoutrackConfig.SUMMARY, YoutrackConfig.REVIEWER]
 
-    def _login(self):
+    @staticmethod
+    def _login():
         data = {
             'login': YoutrackConfig.LOGIN,
             'password': YoutrackConfig.PASS

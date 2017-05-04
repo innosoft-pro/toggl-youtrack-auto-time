@@ -8,7 +8,8 @@ class TogglDataManager:
     def __init__(self):
         self.token = self._authenticate()
 
-    def is_current_time_entry_exist(self):
+    @staticmethod
+    def is_current_time_entry_exist():
         result = requests.get(TogglConfig.GET_CURRENT_ENTRY_URL, auth=(TogglConfig.LOGIN, TogglConfig.PASS))
         result.raise_for_status()
         entry = json.loads(result.text)
@@ -17,7 +18,8 @@ class TogglDataManager:
         else:
             return True
 
-    def _authenticate(self):
+    @staticmethod
+    def _authenticate():
         result = requests.get(TogglConfig.AUTH_URL, auth=(TogglConfig.LOGIN, TogglConfig.PASS))
         result.raise_for_status()
         info = json.loads(result.text)
@@ -55,7 +57,8 @@ class TogglDataManager:
 
         return preprocessed_entries
 
-    def _preprocess_entries(self, result_text):
+    @staticmethod
+    def _preprocess_entries(result_text):
         entries_list = json.loads(result_text)
         result = []
         for entry in entries_list:
@@ -141,7 +144,8 @@ class TogglDataManager:
             result_dict[project['name']] = project['id']
         return result_dict
 
-    def _get_time_entry_template(self, description, id, pid, wid, tags):
+    @staticmethod
+    def _get_time_entry_template(description, id, pid, wid, tags):
         return {
             "time_entry": {
                 "description": description,
