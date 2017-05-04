@@ -75,5 +75,5 @@ class YoutrackConfig:
     # youtrack fields
     SUMMARY = 'summary'
     SUBSYSTEM = 'Subsystem'
-    REVIEWER = 'Ревьюер'
-    STAR = 'Звезда'
+    REVIEWER = 'Reviewer'
+    STAR = 'Star'
