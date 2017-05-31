@@ -11,7 +11,7 @@ Attention!
  
      sudo pip3 install -r requirements.txt
 
-Создай конфиг в корне под любым именем (дефолтное - config.json).
+Создай конфиг в папке `./configs/` под любым именем (дефолтное - config.json).
 
 
 
