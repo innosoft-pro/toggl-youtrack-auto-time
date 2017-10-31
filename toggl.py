@@ -9,11 +9,17 @@ logger = logging.getLogger(__name__)
 
 class TogglDataManager:
     def __init__(self):
-        self.token = self._authenticate()
+        if TogglConfig.TOKEN:
+            self.token = TogglConfig.TOKEN
+        else:
+            self.token = self._authenticate()
 
     @staticmethod
     def is_current_time_entry_exist():
-        result = requests.get(TogglConfig.GET_CURRENT_ENTRY_URL, auth=(TogglConfig.LOGIN, TogglConfig.PASS))
+        if not TogglConfig.TOKEN:
+            result = requests.get(TogglConfig.GET_CURRENT_ENTRY_URL, auth=(TogglConfig.LOGIN, TogglConfig.PASS))
+        else:
+            result = requests.get(TogglConfig.GET_CURRENT_ENTRY_URL, auth=(TogglConfig.TOKEN, TogglConfig.TOKEN_PASS))
         result.raise_for_status()
         entry = json.loads(result.text)
         if entry['data'] is None:

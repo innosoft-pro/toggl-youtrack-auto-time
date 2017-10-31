@@ -56,6 +56,7 @@ class TogglConfig:
     WORKSPACE_NAME = config['toggl']['workspace']
     LOGIN = config['toggl']['login']
     PASS = config['toggl']['password']
+    TOKEN = config['toggl']['token']
     AUTH_URL = 'https://www.toggl.com/api/v8/me'
     GET_ENTRIES_URL = 'https://www.toggl.com/api/v8/time_entries'
     GET_CURRENT_ENTRY_URL = GET_ENTRIES_URL + '/current'
