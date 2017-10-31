@@ -19,6 +19,7 @@ Attention!
       "toggl": {
         "login": "name@example.com",
         "password": "top_secret_password",
+        "token": "top_secret_token",
         "workspace": "workspace_name"
       },
       "youtrack": {
@@ -29,6 +30,7 @@ Attention!
       }
     }
     
+Для тоггла можно указывать либо токен, либо логин/пароль
 
 Если нужно подгрузить конфиг не с дефолтным именем, то используй 
 переменную среды CFG:
