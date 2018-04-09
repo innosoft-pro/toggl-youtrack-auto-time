@@ -102,7 +102,11 @@ class TogglDataManager:
             url = TogglConfig.GET_ENTRIES_URL + '/' + str(time_entry['toggl_id'])
 
             if YoutrackConfig.SUBSYSTEM in youtrack_tasks[time_entry['youtrack_id']]:
-                project_name = youtrack_tasks[time_entry['youtrack_id']][YoutrackConfig.SUBSYSTEM]
+                try:
+                    project_name = youtrack_tasks[time_entry['youtrack_id']][YoutrackConfig.SUBSYSTEM]
+                except KeyError:
+                    logger.error('Task: {} - have subsystem name but does not present in youtrack'
+                                 .format(time_entry['youtrack_id']))
                 try:
                     project_id = projects_ids[project_name]
                 except ValueError:
