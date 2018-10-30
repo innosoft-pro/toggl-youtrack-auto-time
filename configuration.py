@@ -4,6 +4,7 @@ from pathlib import Path
 import os
 import pytz
 
+
 ENV_CONFIG_KEY = 'CFG'
 CONFIGS_FOLDER_PATH = Path('configs')
 DATA_PATH = CONFIGS_FOLDER_PATH.joinpath('launch_data.json')
@@ -67,10 +68,12 @@ class TogglConfig:
 
 class YoutrackConfig:
     YOUTRACK_URL = config['youtrack']['link']
-    LOGIN = config['youtrack']['login']
-    PASS = config['youtrack']['password']
+    LOGIN = config['youtrack'].get('login')
+    TOKEN = config['youtrack'].get('token')
+    PASS = config['youtrack'].get('password')
     ISSUE_ID_CONST = '{issue_id}'
     LOGIN_URL = YOUTRACK_URL + '/rest/user/login'
+    TOKEN_URL = YOUTRACK_URL + '/rest/oauth2/token'
     WORKITEM_URL = YOUTRACK_URL + '/rest/issue/' + ISSUE_ID_CONST + '/timetracking/workitem'
     ISSUE_URL = YOUTRACK_URL + '/rest/issue/' + ISSUE_ID_CONST
     # youtrack fields

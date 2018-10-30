@@ -8,8 +8,19 @@ logger = logging.getLogger(__name__)
 
 class YoutrackDataManager:
     def __init__(self):
-        self.cookie = self._login()
+        if YoutrackConfig.TOKEN:
+            auth_header = {'Authorization': 'Bearer {}'.format(YoutrackConfig.TOKEN)}
+        else:
+            auth_header = {'cookies': self._login()}
         self.attributes = [YoutrackConfig.SUBSYSTEM, YoutrackConfig.SUMMARY, YoutrackConfig.REVIEWER]
+
+        self.headers = {
+            'connection': 'keep-alive',
+            'Accept': 'application/xml',
+            'Content-Type': 'application/xml',
+
+        }
+        self.headers.update(auth_header)
 
     @staticmethod
     def _login():
@@ -38,19 +49,16 @@ class YoutrackDataManager:
         summary: str
         Ревьюер: list of str
         """
-        headers = {
-            'cookie': self.cookie
-        }
-
         result_items = {}
 
         for time_entry in toggle_time_entries:
-            youtrack_url = YoutrackConfig.ISSUE_URL.replace(YoutrackConfig.ISSUE_ID_CONST, time_entry['youtrack_id'])
-            result = requests.get(youtrack_url, headers=headers)
+            youtrack_url = YoutrackConfig.ISSUE_URL.replace(YoutrackConfig.ISSUE_ID_CONST,
+                                                            time_entry['youtrack_id'])
+            result = requests.get(youtrack_url, headers=self.headers)
 
             if result.status_code != 200:
                 logger.error('cannot load tags for issue {0:s}. Response message: {1:s}'
-                      .format(time_entry['youtrack_id'], result.text))
+                             .format(time_entry['youtrack_id'], result.text))
                 continue
 
             result_items[time_entry['youtrack_id']] = {}
@@ -84,10 +92,6 @@ class YoutrackDataManager:
         full_description, duration (sec).
         :param merge: if set to True, will merge multiple tracks for same task into single record
         """
-        headers = {
-            'cookie': self.cookie,
-            'content-type': 'application/xml'
-        }
 
         if merge:
             toggle_time_entries = self._merge_toggl_entries(toggle_time_entries)
@@ -108,7 +112,7 @@ class YoutrackDataManager:
 
             result = requests.post(youtrack_url,
                                    data=data,
-                                   headers=headers)
+                                   headers=self.headers)
             if result.status_code == 201:
                 print('time {0:s} minutes for issue {1:s} tracked successfully'.format(duration_minutes_str,
                                                                                        time_entry['full_description']))
